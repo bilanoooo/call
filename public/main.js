@@ -1,8 +1,9 @@
  const peer = new Peer(undefined, {
-            host: 'call-r3ol.onrender.com', // استبدل بعنوان URL الخاص بك على Render
+            host: 'call-production-b4a4.up.railway.app', // استبدل بعنوان URL الخاص بك على Render
             port: 443, // Render يستخدم HTTPS على المنفذ 443
             path: '/peerjs',
             secure: true, // Render يستخدم HTTPS
+
         });
 
 peer.on('open', (id) => {
