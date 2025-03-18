@@ -1,4 +1,9 @@
-const peer = new Peer(undefined, { host: '/', port: 3000, path: '/peerjs' });
+ const peer = new Peer(undefined, {
+            host: 'call-r3ol.onrender.com', // استبدل بعنوان URL الخاص بك على Render
+            port: 443, // Render يستخدم HTTPS على المنفذ 443
+            path: '/peerjs',
+            secure: true, // Render يستخدم HTTPS
+        });
 
 peer.on('open', (id) => {
     document.getElementById('peer-id').textContent = id;
