@@ -1,25 +1,32 @@
-const express = require('express');
-const { ExpressPeerServer } = require('peer');
-const http = require('http');
-const path = require('path');
+const peer = new Peer(undefined, { host: '/', port: 3000, path: '/peerjs' });
 
-const app = express();
-const server = http.createServer(app);
-
-// إعداد PeerJS Server
-const peerServer = ExpressPeerServer(server, { debug: true });
-app.use('/peerjs', peerServer);
-
-// تقديم الملفات الثابتة (Static Files)
-app.use(express.static(path.join(__dirname, 'public')));
-
-// الصفحة الرئيسية
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+peer.on('open', (id) => {
+    document.getElementById('peer-id').textContent = id;
 });
 
-// تشغيل السيرفر على المنفذ 3000
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+    .then(stream => {
+        const video = document.getElementById('local-video');
+        video.srcObject = stream;
+        video.play();
+
+        document.getElementById('call-btn').addEventListener('click', () => {
+            const remotePeerId = document.getElementById('remote-id').value;
+            const call = peer.call(remotePeerId, stream);
+            call.on('stream', remoteStream => {
+                const remoteVideo = document.getElementById('remote-video');
+                remoteVideo.srcObject = remoteStream;
+                remoteVideo.play();
+            });
+        });
+
+        peer.on('call', call => {
+            call.answer(stream);
+            call.on('stream', remoteStream => {
+                const remoteVideo = document.getElementById('remote-video');
+                remoteVideo.srcObject = remoteStream;
+                remoteVideo.play();
+            });
+        });
+    })
+    .catch(err => console.error('Error accessing media devices.', err));
