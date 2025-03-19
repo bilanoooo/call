@@ -1,21 +1,13 @@
 const peer = new Peer(undefined, {
-    host: 'call-production-b4a4.up.railway.app',
-    port: 443,
-    path: '/peerjs',
+    // استخدام خادم PeerJS العام - لا يتطلب استضافة خاصة
+    host: 'peerjs-server.herokuapp.com',
     secure: true,
+    port: 443,
+    path: '/',
     config: {
         'iceServers': [
             { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'stun:stun1.l.google.com:19302' },
-            { urls: 'stun:stun2.l.google.com:19302' },
-            { urls: 'stun:stun3.l.google.com:19302' },
-            { urls: 'stun:stun4.l.google.com:19302' },
-            // يمكنك إضافة خوادم TURN هنا إذا كانت STUN غير كافية
-            // { 
-            //     urls: 'turn:your-turn-server.com:443',
-            //     username: 'username',
-            //     credential: 'credential'
-            // }
+            { urls: 'stun:stun1.l.google.com:19302' }
         ]
     },
     debug: 3
