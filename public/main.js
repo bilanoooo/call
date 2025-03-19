@@ -15,23 +15,18 @@ const peer = new Peer(undefined, {
     }
 });
 
-// عرض معرف المستخدم عند الاتصال
 peer.on('open', (id) => {
     document.getElementById('peer-id').textContent = id;
 });
 
-// طلب إذن الوصول إلى الكاميرا والمايكروفون
 navigator.mediaDevices.getUserMedia({ video: true, audio: true })
     .then(stream => {
-        const localVideo = document.getElementById('local-video');
-        localVideo.srcObject = stream;
-        localVideo.play();
+        const video = document.getElementById('local-video');
+        video.srcObject = stream;
+        video.play();
 
-        // إجراء مكالمة
         document.getElementById('call-btn').addEventListener('click', () => {
             const remotePeerId = document.getElementById('remote-id').value;
-            if (!remotePeerId) return alert("يرجى إدخال معرف المستخدم الآخر!");
-            
             const call = peer.call(remotePeerId, stream);
             call.on('stream', remoteStream => {
                 const remoteVideo = document.getElementById('remote-video');
@@ -40,7 +35,6 @@ navigator.mediaDevices.getUserMedia({ video: true, audio: true })
             });
         });
 
-        // استقبال المكالمات
         peer.on('call', call => {
             call.answer(stream);
             call.on('stream', remoteStream => {
@@ -50,4 +44,4 @@ navigator.mediaDevices.getUserMedia({ video: true, audio: true })
             });
         });
     })
-    .catch(err => console.error('❌ خطأ في الوصول إلى الوسائط:', err));
+    .catch(err => console.error('Error accessing media devices.', err));
