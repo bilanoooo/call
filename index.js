@@ -1,32 +1,19 @@
-const peer = new Peer(undefined, { host: '/', port: 3000, path: '/peerjs' });
+const express = require('express');
+const { ExpressPeerServer } = require('peer');
+const http = require('http');
+const path = require('path');
 
-peer.on('open', (id) => {
-    document.getElementById('peer-id').textContent = id;
+const app = express();
+const server = http.createServer(app);
+const peerServer = ExpressPeerServer(server, { debug: true });
+
+app.use('/peerjs', peerServer);
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-    .then(stream => {
-        const video = document.getElementById('local-video');
-        video.srcObject = stream;
-        video.play();
-
-        document.getElementById('call-btn').addEventListener('click', () => {
-            const remotePeerId = document.getElementById('remote-id').value;
-            const call = peer.call(remotePeerId, stream);
-            call.on('stream', remoteStream => {
-                const remoteVideo = document.getElementById('remote-video');
-                remoteVideo.srcObject = remoteStream;
-                remoteVideo.play();
-            });
-        });
-
-        peer.on('call', call => {
-            call.answer(stream);
-            call.on('stream', remoteStream => {
-                const remoteVideo = document.getElementById('remote-video');
-                remoteVideo.srcObject = remoteStream;
-                remoteVideo.play();
-            });
-        });
-    })
-    .catch(err => console.error('Error accessing media devices.', err));
+server.listen(3000, () => {
+    console.log('Server running on http://localhost:3000');
+});
