@@ -5,19 +5,21 @@ const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
-const peerServer = ExpressPeerServer(server, { 
-    debug: true,
-    // إضافة مزيد من الخيارات للتشخيص
-    allow_discovery: true
-});
 
+// إعداد PeerJS Server
+const peerServer = ExpressPeerServer(server, { debug: true });
 app.use('/peerjs', peerServer);
+
+// تقديم الملفات الثابتة (Static Files)
 app.use(express.static(path.join(__dirname, 'public')));
 
+// الصفحة الرئيسية
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-server.listen(process.env.PORT || 3000, () => {
-    console.log(`Server running on port ${process.env.PORT || 3000}`);
+// تشغيل السيرفر على المنفذ 3000
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
