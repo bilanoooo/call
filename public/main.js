@@ -1,10 +1,20 @@
- const peer = new Peer(undefined, {
-            host: 'call-production-b4a4.up.railway.app', // استبدل بعنوان URL الخاص بك على Render
-            port: 443, // Render يستخدم HTTPS على المنفذ 443
-            path: '/peerjs',
-            secure: true, // Render يستخدم HTTPS
+const peer = new Peer(undefined, {
+    host: 'call-production-b4a4.up.railway.app', 
+    port: 443, 
+    path: '/peerjs',
+    secure: true, 
+    config: {
+        iceServers: [
+            { urls: "stun:stun.l.google.com:19302" }, // سيرفر STUN مجاني من جوجل
+            { 
+                urls: "turn:your-turn-server.com:3478", 
+                username: "user", 
+                credential: "password" 
+            } // استبدل بمعلومات سيرفر TURN الخاص بك إذا لزم الأمر
+        ]
+    }
+});
 
-        });
 
 peer.on('open', (id) => {
     document.getElementById('peer-id').textContent = id;
